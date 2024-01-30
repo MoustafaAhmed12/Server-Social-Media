@@ -11,9 +11,9 @@ router.post("/login", authController.login);
 // User
 router.patch("/user/:userId", userController.updateUser);
 router.patch("/user/:id/posts", userController.updateUserPosts);
-router.delete("/user/:id", userController.deleteUser);
+// router.delete("/user/:id", userController.deleteUser);
 router.get("/user", userController.getUser);
-router.get("/users", userController.getAllUsers);
+router.get("/users/:userId", userController.getAllUsers);
 router.get("/user/friends/:userId", userController.getFriends);
 router.get("/user/follower/:userId", userController.getFollowers);
 router.put("/user/:id/follow", userController.followUser);

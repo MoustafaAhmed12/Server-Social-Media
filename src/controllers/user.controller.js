@@ -49,19 +49,6 @@ userController.updateUserPosts = async (req, res) => {
     return res.status(403).json("You can update only your account!");
   }
 };
-//delete user
-userController.deleteUser = async (req, res) => {
-  if (req.body.userId === req.params.id || req.body.isAdmin) {
-    try {
-      await User.findByIdAndDelete(req.params.id);
-      res.status(200).json("Account has been deleted");
-    } catch (err) {
-      return res.status(500).json(err);
-    }
-  } else {
-    return res.status(403).json("You can delete only your account!");
-  }
-};
 
 //get a user
 userController.getUser = async (req, res) => {
@@ -80,17 +67,21 @@ userController.getUser = async (req, res) => {
 
 //get All Users
 userController.getAllUsers = async (req, res) => {
+  const { userId } = req.params;
   try {
-    User.find({}, (err, users) => {
-      if (err) res.send("something wrong");
-      res.status(200).send(users);
-    }).populate("posts");
+    const currentUser = await User.findById(userId);
+    const allUsers = await User.find({}).populate("posts");
+    const users = allUsers.filter(
+      (u) => !currentUser.followings?.includes(u._id)
+    );
+
+    res.status(200).send(users);
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ msg: err.message });
   }
 };
 
-//get friends
+//get Followings
 userController.getFriends = async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);

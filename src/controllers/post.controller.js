@@ -123,14 +123,10 @@ postController.getPosts = async (req, res) => {
 postController.timelinePost = async (req, res) => {
   try {
     const currentUser = await User.findById(req.params.userId);
-    const userPosts = await Post.find({ userId: currentUser._id })
-      .populate({
-        path: "userId",
-        select: "username name surname profilePicture",
-      })
-      .sort({
-        createdAt: -1,
-      });
+    const userPosts = await Post.find({ userId: currentUser._id }).populate({
+      path: "userId",
+      select: "username name surname profilePicture",
+    });
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => {
         return Post.find({ userId: friendId })
